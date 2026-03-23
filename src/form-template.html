@@ -878,7 +878,7 @@ async function submitFeedback() {
   }));
 
   try {
-    if (WEBHOOK_URL.startsWith('http')) {
+    if (WEBHOOK_URL.startsWith('https')) {
       console.log('Submitting to webhook…', payload);
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
