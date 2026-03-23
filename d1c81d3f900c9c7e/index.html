@@ -985,6 +985,10 @@ function restart() {
   document.querySelectorAll('.comp-card').forEach(c => c.classList.remove('answered', 'required-error'));
   document.querySelectorAll('.open-card').forEach(c => c.classList.remove('required-error'));
 
+  const submitBtn = document.getElementById('btn-submit');
+  submitBtn.disabled = false;
+  submitBtn.innerHTML = 'Submit feedback <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+
   refreshDropdown();
   showScreen('screen-welcome');
 }
