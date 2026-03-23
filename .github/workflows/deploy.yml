@@ -28,9 +28,17 @@ jobs:
           echo "Deploying to path: $HASH"
 
       - name: Inject webhook URL into HTML template
+        env:
+          PA_WEBHOOK_URL: ${{ secrets.PA_WEBHOOK_URL }}
         run: |
-          sed 's|__WEBHOOK_URL__|${{ secrets.PA_WEBHOOK_URL }}|g' \
-            src/form-template.html > /tmp/index.html
+          python3 -c "
+import os
+with open('src/form-template.html') as f:
+    content = f.read()
+content = content.replace('__WEBHOOK_URL__', os.environ['PA_WEBHOOK_URL'])
+with open('/tmp/index.html', 'w') as f:
+    f.write(content)
+"
 
       - name: Prepare dist folder
         run: |
