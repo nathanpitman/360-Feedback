@@ -879,12 +879,15 @@ async function submitFeedback() {
 
   try {
     if (WEBHOOK_URL !== 'https://default2957ba74c9554b87b497302a570630.79.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2eaf00d7dd8a4382a75294ae92947b4d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=6cpCiiAPh1tJy5fQD8M0Kn_Ypp8gy8lCeNkX3v5wPTc') {
-      await fetch(WEBHOOK_URL, {
+      console.log('Submitting to webhook…', payload);
+      const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        mode: 'no-cors'
       });
+      console.log('Webhook response status:', res.status);
+    } else {
+      console.warn('WEBHOOK_URL not configured — submission skipped.');
     }
 
     // Set dedup cookie
