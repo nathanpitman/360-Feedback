@@ -31,14 +31,7 @@ jobs:
         env:
           PA_WEBHOOK_URL: ${{ secrets.PA_WEBHOOK_URL }}
         run: |
-          python3 -c "
-import os
-with open('src/form-template.html') as f:
-    content = f.read()
-content = content.replace('__WEBHOOK_URL__', os.environ['PA_WEBHOOK_URL'])
-with open('/tmp/index.html', 'w') as f:
-    f.write(content)
-"
+          python3 -c "import os; content = open('src/form-template.html').read().replace('__WEBHOOK_URL__', os.environ['PA_WEBHOOK_URL']); open('/tmp/index.html', 'w').write(content)"
 
       - name: Prepare dist folder
         run: |
