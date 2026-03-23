@@ -16,7 +16,7 @@ Colleague fills in the form on GitHub Pages
 
        ↓  (POST to Power Automate webhook — URL injected at build time, not in repo)
 
-Power Automate writes a row to 360_feedback_dashboard_v2.xlsx in your SharePoint/OneDrive
+Power Automate writes a row to 360_feedback_dashboard.xlsx in your SharePoint/OneDrive
 ```
 
 The `{hash}` in the URL is derived from your Power Automate webhook URL at build time — unguessable from the outside, but stable unless you rotate the secret.
