@@ -1,0 +1,67 @@
+name: Deploy 360 Feedback Form
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # also allows manual trigger from Actions tab
+
+permissions:
+  contents: write  # needed to push to gh-pages branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Generate hash path from webhook URL
+        id: hash
+        run: |
+          # SHA256 hash of the webhook URL → first 16 chars as the path segment
+          # Unguessable, but stable — same secret always produces same URL
+          HASH=$(echo -n "${{ secrets.PA_WEBHOOK_URL }}" | sha256sum | cut -c1-16)
+          echo "path=$HASH" >> $GITHUB_OUTPUT
+          echo "Deploying to path: $HASH"
+
+      - name: Inject webhook URL into HTML template
+        run: |
+          sed 's|__WEBHOOK_URL__|${{ secrets.PA_WEBHOOK_URL }}|g' \
+            src/form-template.html > /tmp/index.html
+
+      - name: Prepare dist folder
+        run: |
+          mkdir -p dist/${{ steps.hash.outputs.path }}
+          cp /tmp/index.html dist/${{ steps.hash.outputs.path }}/index.html
+
+          # Also write a root index that prints nothing useful (no hints)
+          cat > dist/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta name="robots" content="noindex, nofollow">
+            <title>Not found</title>
+          </head>
+          <body></body>
+          </html>
+          EOF
+
+      - name: Print live URL
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Live form URL:"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ steps.hash.outputs.path }}/"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Share as:"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ steps.hash.outputs.path }}/?colleagues=Name1,Name2,Name3"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Deploy to GitHub Pages (gh-pages branch)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          force_orphan: false   # preserve history
+          keep_files: true      # don't wipe old hashed paths on redeploy
