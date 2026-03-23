@@ -575,7 +575,7 @@ select.subject-select:focus { border-color: var(--accent); }
 // ═══════════════════════════════════════════════════════
 
 // Replace with your Power Automate HTTP trigger URL
-const WEBHOOK_URL = 'https://default2957ba74c9554b87b497302a570630.79.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2eaf00d7dd8a4382a75294ae92947b4d/triggers/manual/paths/invoke?api-version=1__WEBHOOK_URL__sp=%2Ftriggers%2Fmanual%2Frun__WEBHOOK_URL__sv=1.0__WEBHOOK_URL__sig=6cpCiiAPh1tJy5fQD8M0Kn_Ypp8gy8lCeNkX3v5wPTc';
+const WEBHOOK_URL = 'https://default2957ba74c9554b87b497302a570630.79.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2eaf00d7dd8a4382a75294ae92947b4d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=6cpCiiAPh1tJy5fQD8M0Kn_Ypp8gy8lCeNkX3v5wPTc';
 
 
 // How many days before the same person can re-submit for the same subject
@@ -878,7 +878,7 @@ async function submitFeedback() {
   }));
 
   try {
-    if (WEBHOOK_URL !== 'https://default2957ba74c9554b87b497302a570630.79.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2eaf00d7dd8a4382a75294ae92947b4d/triggers/manual/paths/invoke?api-version=1__WEBHOOK_URL__sp=%2Ftriggers%2Fmanual%2Frun__WEBHOOK_URL__sv=1.0__WEBHOOK_URL__sig=6cpCiiAPh1tJy5fQD8M0Kn_Ypp8gy8lCeNkX3v5wPTc') {
+    if (WEBHOOK_URL !== 'https://default2957ba74c9554b87b497302a570630.79.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2eaf00d7dd8a4382a75294ae92947b4d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=6cpCiiAPh1tJy5fQD8M0Kn_Ypp8gy8lCeNkX3v5wPTc') {
       await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
