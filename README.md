@@ -29,7 +29,7 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 |---|---|
 | `src/form-template.html` | The feedback form. Edit this to change questions or styling. Contains no secrets. |
 | `power_automate_flow.json` | Power Automate flow definition. Import once into your O365 tenant. |
-| `360_feedback_dashboard_v2.xlsx` | Excel template. Upload once to SharePoint or OneDrive. Responses write here. |
+| `360_feedback_dashboard.xlsx` | Excel template. Upload once to SharePoint or OneDrive. Responses write here. |
 | `.github/workflows/deploy.yml` | Build and deploy pipeline. Injects the webhook URL and publishes to GitHub Pages. |
 
 ---
@@ -38,7 +38,7 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 
 ### Step 1 — Upload the Excel template to SharePoint or OneDrive
 
-1. Upload `360_feedback_dashboard_v2.xlsx` to a SharePoint document library or your OneDrive
+1. Upload `360_feedback_dashboard.xlsx` to a SharePoint document library or your OneDrive
 2. Note the **site/drive path** — you'll need it in Step 2
 3. Make sure the file stays at this location permanently — Power Automate will write to it by path
 
@@ -54,7 +54,7 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 4. Once imported, open the flow and find the **Add Row to Excel** action
 5. Update these two fields to point to your uploaded Excel file:
    - **Drive**: select your SharePoint site or OneDrive
-   - **File**: browse to `360_feedback_dashboard_v2.xlsx`
+   - **File**: browse to `360_feedback_dashboard.xlsx`
 6. **Save and turn the flow on**
 7. Go to **My Flows → select the flow → Edit → When an HTTP request is received**
 8. Copy the **HTTP POST URL** — this is your webhook URL
