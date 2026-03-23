@@ -16,7 +16,7 @@ Colleague fills in the form on GitHub Pages
 
        ↓  (POST to Power Automate webhook — URL injected at build time, not in repo)
 
-Power Automate writes a row to 360_feedback_dashboard_v2.xlsx in your SharePoint/OneDrive
+Power Automate writes a row to 360_feedback_dashboard.xlsx in your SharePoint/OneDrive
 ```
 
 The `{hash}` in the URL is derived from your Power Automate webhook URL at build time — unguessable from the outside, but stable unless you rotate the secret.
@@ -29,7 +29,7 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 |---|---|
 | `src/form-template.html` | The feedback form. Edit this to change questions or styling. Contains no secrets. |
 | `power_automate_payload_reference.json` | Sample JSON payload. Paste into Power Automate's "Generate from sample" when building the flow. |
-| `360_feedback_dashboard_v2.xlsx` | Excel template. Upload once to SharePoint or OneDrive. Responses write here. |
+| `360_feedback_dashboard.xlsx` | Excel template. Upload once to SharePoint or OneDrive. Responses write here. |
 | `.github/workflows/deploy.yml` | Build and deploy pipeline. Injects the webhook URL and publishes to GitHub Pages. |
 | `skills/360-feedback-deployer/SKILL.md` | Context skill for AI assistants continuing work on this project. |
 
@@ -39,7 +39,7 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 
 ### Step 1 — Upload the Excel template to SharePoint or OneDrive
 
-1. Upload `360_feedback_dashboard_v2.xlsx` to a SharePoint document library or your OneDrive
+1. Upload `360_feedback_dashboard.xlsx` to a SharePoint document library or your OneDrive
 2. Note the **site/drive path** — you'll need it in Step 2
 3. Make sure the file stays at this location permanently — Power Automate will write to it by path
 
@@ -71,7 +71,7 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 2. Fill in the fields:
    - **Location**: select your SharePoint site or OneDrive
    - **Document Library**: the library where you uploaded the Excel file
-   - **File**: browse to `360_feedback_dashboard_v2.xlsx`
+   - **File**: browse to `360_feedback_dashboard.xlsx`
    - **Table**: select `FeedbackResponses`
 3. Map each column to the matching field from the Parse JSON dynamic content:
 
