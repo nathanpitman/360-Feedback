@@ -875,7 +875,7 @@ async function submitFeedback() {
   };
   SECTIONS.forEach(sec => sec.competencies.forEach(comp => {
     const v = answers[comp.key];
-    payload[comp.key] = (v && v !== 'na') ? parseInt(v) : null;
+    if (v && v !== 'na') payload[comp.key] = parseInt(v);
   }));
 
   try {
