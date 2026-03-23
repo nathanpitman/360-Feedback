@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="googlebot" content="noindex, nofollow">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>360° Feedback</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
@@ -878,7 +879,7 @@ async function submitFeedback() {
   }));
 
   try {
-    if (WEBHOOK_URL.startsWith('http')) {
+    if (WEBHOOK_URL.startsWith('https')) {
       console.log('Submitting to webhook…', payload);
       const res = await fetch(WEBHOOK_URL, {
         method: 'POST',
