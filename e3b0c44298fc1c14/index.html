@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>360° Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Variables ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #FAFAF8;
+  --surface:  #FFFFFF;
+  --border:   #E8E5E0;
+  --ink:      #1C1917;
+  --ink2:     #78716C;
+  --ink3:     #A8A29E;
+  --accent:   #4F46E5;
+  --accent-l: #EEF2FF;
+  --green:    #059669;
+  --green-l:  #ECFDF5;
+  --red:      #DC2626;
+  --amber:    #D97706;
+  --r1:       #EF4444;
+  --r2:       #F97316;
+  --r3:       #EAB308;
+  --r4:       #22C55E;
+  --r5:       #16A34A;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Progress bar ──────────────────────────────────── */
+#progress-track {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--border);
+  z-index: 200;
+}
+#progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.45s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+
+/* ── Top bar ───────────────────────────────────────── */
+#topbar {
+  position: fixed;
+  top: 3px; left: 0; right: 0;
+  height: 56px;
+  background: rgba(250,250,248,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  z-index: 100;
+}
+
+.topbar-logo {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+}
+
+.topbar-logo span { color: var(--accent); }
+
+.topbar-step {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink3);
+  letter-spacing: 0.3px;
+}
+
+/* ── Page wrapper ──────────────────────────────────── */
+#page {
+  padding-top: 80px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Screen transitions ────────────────────────────── */
+.screen {
+  width: 100%;
+  max-width: 680px;
+  padding: 48px 24px 80px;
+  display: none;
+  animation: rise .35s cubic-bezier(.4,0,.2,1) both;
+}
+.screen.active { display: block; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Welcome screen ────────────────────────────────── */
+.welcome-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.welcome-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.welcome-title em {
+  font-style: italic;
+  font-weight: 600;
+}
+
+.welcome-desc {
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 500px;
+}
+
+.info-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+
+.info-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--ink2);
+}
+
+.info-pill svg { flex-shrink: 0; }
+
+/* Subject selector */
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.field-hint {
+  font-size: 12px;
+  color: var(--ink3);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+select.subject-select {
+  width: 100%;
+  max-width: 380px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--surface);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2378716C' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  cursor: pointer;
+  transition: border-color .2s;
+  outline: none;
+  margin-bottom: 24px;
+}
+
+select.subject-select:focus { border-color: var(--accent); }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 28px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .2s, transform .15s;
+}
+.btn-primary:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── Section screen ────────────────────────────────── */
+.section-meta {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 30px;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.section-subject {
+  font-size: 14px;
+  color: var(--ink2);
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-subject strong { color: var(--ink); }
+
+/* Competency card */
+.comp-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 16px;
+  transition: border-color .2s;
+}
+
+.comp-card.answered { border-color: var(--accent); }
+
+.comp-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.comp-desc {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+/* Rating buttons */
+.rating-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.rb {
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 12.5px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  background: var(--bg);
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .18s;
+  white-space: nowrap;
+  outline: none;
+}
+
+.rb:hover { border-color: var(--ink2); color: var(--ink); }
+
+.rb.sel-1 { background: var(--r1); border-color: var(--r1); color: #fff; }
+.rb.sel-2 { background: var(--r2); border-color: var(--r2); color: #fff; }
+.rb.sel-3 { background: var(--r3); border-color: var(--r3); color: #fff; }
+.rb.sel-4 { background: var(--r4); border-color: var(--r4); color: #fff; }
+.rb.sel-5 { background: var(--r5); border-color: var(--r5); color: #fff; }
+
+.rb-na {
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  background: transparent;
+  color: var(--ink3);
+  cursor: pointer;
+  transition: all .18s;
+  outline: none;
+}
+.rb-na:hover { color: var(--ink2); border-color: var(--ink3); }
+.rb-na.sel-na { background: var(--bg); border-color: var(--ink3); border-style: solid; color: var(--ink2); }
+
+/* Nav buttons */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-ghost {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  background: transparent;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .18s;
+  outline: none;
+}
+.btn-ghost:hover { border-color: var(--ink2); color: var(--ink); }
+
+.section-progress {
+  font-size: 12px;
+  color: var(--ink3);
+  font-weight: 500;
+}
+
+/* ── Open text screen ──────────────────────────────── */
+.open-label {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.open-hint {
+  font-size: 13px;
+  color: var(--ink2);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.open-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.open-card textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  background: transparent;
+  resize: none;
+  min-height: 100px;
+  line-height: 1.7;
+}
+
+.open-card textarea::placeholder { color: var(--ink3); }
+
+/* ── Dupe warning ──────────────────────────────────── */
+#dupe-banner {
+  display: none;
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: #92400E;
+  margin-bottom: 20px;
+  line-height: 1.55;
+}
+
+/* ── Thank you ─────────────────────────────────────── */
+#screen-done {
+  text-align: center;
+}
+
+.done-icon {
+  width: 64px; height: 64px;
+  background: var(--green-l);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 26px;
+}
+
+.done-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 34px;
+  letter-spacing: -0.4px;
+  margin-bottom: 12px;
+}
+
+.done-desc {
+  font-size: 15px;
+  color: var(--ink2);
+  max-width: 420px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+
+.score-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  max-width: 480px;
+  margin: 0 auto 32px;
+  text-align: left;
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.score-row:last-child { border-bottom: none; }
+.score-row .comp-n { color: var(--ink); font-weight: 500; }
+.score-row .comp-v { font-weight: 600; color: var(--accent); }
+.score-row .comp-na { color: var(--ink3); font-style: italic; }
+
+.btn-restart {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  background: transparent;
+  color: var(--ink2);
+  cursor: pointer;
+  transition: all .18s;
+  outline: none;
+}
+.btn-restart:hover { border-color: var(--ink); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div id="progress-track"><div id="progress-fill"></div></div>
+
+<div id="topbar">
+  <div class="topbar-logo">360<span>°</span> Feedback</div>
+  <div class="topbar-step" id="step-label"></div>
+</div>
+
+<div id="page">
+
+  <!-- ── Welcome ──────────────────────────────────── -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-eyebrow">Anonymous · Confidential</div>
+    <h1 class="welcome-title">Share <em>honest</em> feedback to help someone grow</h1>
+    <p class="welcome-desc">
+      Your responses are completely anonymous — your name is never recorded.
+      Ratings feed directly into your colleague's personal development plan.
+      Leave any competency blank if you haven't had the opportunity to observe it.
+    </p>
+
+    <div class="info-row">
+      <div class="info-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Fully anonymous
+      </div>
+      <div class="info-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ~8 minutes
+      </div>
+      <div class="info-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        9 competencies
+      </div>
+    </div>
+
+    <div id="dupe-banner"></div>
+
+    <label class="field-label" for="subject-select">
+      Who are you giving feedback on?
+      <span class="field-hint">Select from the list below</span>
+    </label>
+    <select class="subject-select" id="subject-select" onchange="onSubjectChange()">
+      <option value="">— Select a colleague —</option>
+      <!-- Populated from ?colleagues=Name1,Name2,Name3 URL parameter -->
+    </select>
+
+    <div>
+      <button class="btn-primary" id="btn-start" onclick="startSurvey()" disabled>
+        Begin feedback
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Sections rendered by JS ──────────────────── -->
+  <div id="section-screens"></div>
+
+  <!-- ── Open text ────────────────────────────────── -->
+  <div class="screen" id="screen-open">
+    <div class="section-meta" id="open-meta">Section 5 of 5</div>
+    <h2 class="section-title">In their own words</h2>
+    <p class="section-subject" id="open-subject-line">Sharing feedback for <strong></strong></p>
+
+    <div class="open-card">
+      <div class="open-label">Strengths</div>
+      <div class="open-hint">Describe at least 2 things you would say are this person's strengths. Be specific.</div>
+      <textarea id="txt-strengths" placeholder="e.g. Consistently communicates with clarity and brings people along on complex ideas. Also demonstrates real empathy when the team is under pressure…" rows="5"></textarea>
+    </div>
+
+    <div class="open-card">
+      <div class="open-label">Development</div>
+      <div class="open-hint">Describe at least 1 thing you'd like them to do more of as part of their development.</div>
+      <textarea id="txt-development" placeholder="e.g. I'd love to see more proactive sharing of progress updates before they're asked for…" rows="4"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-ghost" onclick="goSection(SECTIONS.length - 1)">← Back</button>
+      <button class="btn-primary" id="btn-submit" onclick="submitFeedback()">
+        Submit feedback
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Done ─────────────────────────────────────── -->
+  <div class="screen" id="screen-done">
+    <div class="done-icon">✓</div>
+    <h2 class="done-title">Thank you!</h2>
+    <p class="done-desc" id="done-desc">Your anonymous feedback has been submitted and will feed into this colleague's development plan.</p>
+    <div class="score-summary" id="score-summary"></div>
+    <button class="btn-restart" onclick="restart()">← Give feedback for someone else</button>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════
+
+// Replace with your Power Automate HTTP trigger URL
+const WEBHOOK_URL = '';
+
+
+// How many days before the same person can re-submit for the same subject
+const DEDUP_DAYS = 30;
+
+// ═══════════════════════════════════════════════════════
+// POPULATE DROPDOWN FROM URL PARAMETERS
+// Usage: ?colleagues=Alice%20Smith,Bob%20Jones,Carol%20Lee
+// Names are never stored in the HTML source — pass them at link-share time.
+// ═══════════════════════════════════════════════════════
+function populateColleaguesFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get('colleagues');
+  const select = document.getElementById('subject-select');
+
+  if (raw) {
+    const names = raw.split(',').map(n => n.trim()).filter(Boolean);
+    names.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      select.appendChild(opt);
+    });
+  } else {
+    // No URL param — show a helpful message in the dropdown
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.disabled = true;
+    opt.textContent = '— No colleagues in link. Contact your HR admin. —';
+    select.appendChild(opt);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════
+const SECTIONS = [
+  {
+    pillar: 'Make it Happen',
+    competencies: [
+      { key: 'future_focused', name: 'Future Focused',
+        desc: 'Actively seeks to understand the future world to ensure we are ahead of the game. Seeks potential opportunities before they even exist and identifies potential hurdles with a plan to overcome them.' },
+      { key: 'adaptability', name: 'Adaptability',
+        desc: 'Flexibility in handling change. Willingly challenges their own ideas based on new information or changing needs. Able to juggle multiple demands.' },
+      { key: 'positive_outlook', name: 'Positive Outlook',
+        desc: 'Persistence in pursuing goals despite obstacles and setbacks. Sees the positive in people, situations and events more often than the negative.' },
+    ]
+  },
+  {
+    pillar: 'Never Settle',
+    competencies: [
+      { key: 'communication', name: 'Communication',
+        desc: 'Communicates with impact and credibility across multiple channels and stakeholders. Simplifies complex issues into executable plans. Demonstrates active listening.' },
+      { key: 'empathy', name: 'Empathy',
+        desc: "Sensing others' feelings and perspectives, taking an active interest in their concerns. Can pick up cues and understand what is being felt and thought." },
+    ]
+  },
+  {
+    pillar: 'Choose Right',
+    competencies: [
+      { key: 'teamwork', name: 'Teamwork',
+        desc: 'Seeks to understand the views of others so common goals can be developed and achieved. Works with others interdependently, not separately or competitively.' },
+      { key: 'stakeholder_management', name: 'Stakeholder Management',
+        desc: 'Consistently leads by example. Acts with integrity, impartiality and independence, balancing different stakeholder needs. Uses interpersonal skills to build great relationships.' },
+    ]
+  },
+  {
+    pillar: 'Smart with Heart',
+    competencies: [
+      { key: 'planning', name: 'Planning & Problem Solving',
+        desc: 'Demonstrates the ability to analyse and understand data and information quickly. Plans and organises work and resources, always ensuring commitments are completed on time.' },
+      { key: 'inspirational_leadership', name: 'Inspirational Leadership',
+        desc: 'Brings people together to get the job done and brings out the best in people. Engages with impact and credibility.' },
+    ]
+  },
+];
+
+const RATINGS = [
+  { label: 'Strongly Disagree', short: '1' },
+  { label: 'Disagree',          short: '2' },
+  { label: 'Neither',           short: '3' },
+  { label: 'Agree',             short: '4' },
+  { label: 'Strongly Agree',    short: '5' },
+];
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let answers       = {};   // key → 1-5 | 'na'
+let currentScreen = 'welcome';
+let selectedSubject = '';
+
+const totalSections = SECTIONS.length + 1; // +1 for open text
+
+// ═══════════════════════════════════════════════════════
+// COOKIE HELPERS
+// ═══════════════════════════════════════════════════════
+function cookieKey(subject) {
+  return '360fb_' + subject.replace(/\s+/g,'_').toLowerCase();
+}
+
+function setCookie(subject) {
+  const key = cookieKey(subject);
+  const exp = new Date();
+  exp.setDate(exp.getDate() + DEDUP_DAYS);
+  document.cookie = `${key}=1; expires=${exp.toUTCString()}; path=/; SameSite=Strict`;
+}
+
+function hasCookie(subject) {
+  const key = cookieKey(subject);
+  return document.cookie.split(';').some(c => c.trim().startsWith(key + '='));
+}
+
+// ═══════════════════════════════════════════════════════
+// BUILD SECTION SCREENS
+// ═══════════════════════════════════════════════════════
+function buildSections() {
+  const container = document.getElementById('section-screens');
+  SECTIONS.forEach((sec, si) => {
+    const div = document.createElement('div');
+    div.className = 'screen';
+    div.id = `screen-section-${si}`;
+
+    const compCards = sec.competencies.map(comp => `
+      <div class="comp-card" id="card-${comp.key}">
+        <div class="comp-name">${comp.name}</div>
+        <div class="comp-desc">${comp.desc}</div>
+        <div class="rating-group" id="rg-${comp.key}">
+          ${RATINGS.map((r, ri) => `
+            <button class="rb" data-key="${comp.key}" data-val="${ri+1}"
+              onclick="rate('${comp.key}', ${ri+1}, this)">${r.label}</button>
+          `).join('')}
+        </div>
+        <button class="rb-na" id="na-${comp.key}" data-key="${comp.key}"
+          onclick="rate('${comp.key}', 'na', this)">N/A — not observed</button>
+      </div>
+    `).join('');
+
+    div.innerHTML = `
+      <div class="section-meta">Section ${si+1} of ${totalSections} · ${sec.pillar}</div>
+      <h2 class="section-title">${sec.pillar}</h2>
+      <p class="section-subject" id="subj-line-${si}">Sharing feedback for <strong></strong></p>
+      ${compCards}
+      <div class="nav-row">
+        <button class="btn-ghost" onclick="goSection(${si - 1})">${si === 0 ? '← Back' : '← Back'}</button>
+        <span class="section-progress" id="sp-${si}"></span>
+        <button class="btn-primary" onclick="goSection(${si + 1})">
+          ${si === SECTIONS.length - 1 ? 'Continue' : 'Next'}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// RATING
+// ═══════════════════════════════════════════════════════
+function rate(key, val, btn) {
+  answers[key] = val;
+
+  // Clear all buttons in this group
+  const rg = document.getElementById(`rg-${key}`);
+  rg.querySelectorAll('.rb').forEach(b => {
+    for (let i=1;i<=5;i++) b.classList.remove(`sel-${i}`);
+  });
+  document.getElementById(`na-${key}`).classList.remove('sel-na');
+
+  if (val === 'na') {
+    btn.classList.add('sel-na');
+  } else {
+    btn.classList.add(`sel-${val}`);
+  }
+
+  // Mark card answered
+  document.getElementById(`card-${key}`).classList.toggle('answered', true);
+  updateProgress();
+  updateSectionProgress();
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.animation = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.animation = '';
+  target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  currentScreen = id;
+}
+
+function goSection(idx) {
+  if (idx < 0) {
+    showScreen('screen-welcome');
+    document.getElementById('step-label').textContent = '';
+    return;
+  }
+  if (idx >= SECTIONS.length) {
+    // Open text
+    document.getElementById('open-meta').textContent = `Section ${totalSections} of ${totalSections}`;
+    document.querySelector('#screen-open #open-subject-line strong').textContent = selectedSubject;
+    showScreen('screen-open');
+    document.getElementById('step-label').textContent = `${totalSections} of ${totalSections}`;
+    updateProgress();
+    return;
+  }
+
+  // Update subject lines
+  document.querySelector(`#screen-section-${idx} #subj-line-${idx} strong`).textContent = selectedSubject;
+  document.getElementById('step-label').textContent = `${idx+1} of ${totalSections}`;
+  showScreen(`screen-section-${idx}`);
+  updateSectionProgress(idx);
+}
+
+function updateProgress() {
+  const allKeys = SECTIONS.flatMap(s => s.competencies.map(c => c.key));
+  const answered = allKeys.filter(k => answers[k] !== undefined).length;
+  const onOpenText = currentScreen === 'screen-open';
+  const pct = Math.round(((answered / allKeys.length) * (totalSections - 1) / totalSections + (onOpenText ? 1/totalSections : 0)) * 100);
+  document.getElementById('progress-fill').style.width = Math.min(pct, 95) + '%';
+}
+
+function updateSectionProgress() {
+  SECTIONS.forEach((sec, si) => {
+    const sp = document.getElementById(`sp-${si}`);
+    if (!sp) return;
+    const done = sec.competencies.filter(c => answers[c.key] !== undefined).length;
+    sp.textContent = `${done} of ${sec.competencies.length} rated`;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// SUBJECT CHANGE
+// ═══════════════════════════════════════════════════════
+function refreshDropdown() {
+  const select = document.getElementById('subject-select');
+  Array.from(select.options).forEach(opt => {
+    if (!opt.value) return; // skip placeholder
+    if (hasCookie(opt.value)) {
+      opt.disabled = true;
+      opt.textContent = '✓ ' + opt.value;
+    } else {
+      opt.disabled = false;
+      // Strip tick if previously set
+      opt.textContent = opt.textContent.replace(/^✓\s*/, '');
+    }
+  });
+}
+
+function onSubjectChange() {
+  const sel = document.getElementById('subject-select').value;
+  selectedSubject = sel;
+  const btn = document.getElementById('btn-start');
+  btn.disabled = !sel;
+
+  const banner = document.getElementById('dupe-banner');
+  if (sel && hasCookie(sel)) {
+    banner.style.display = 'block';
+    banner.innerHTML = `⚠️ <strong>Already submitted.</strong> You've given feedback for <strong>${sel}</strong> in the last ${DEDUP_DAYS} days. Select a different colleague.`;
+    btn.disabled = true;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════════════
+function startSurvey() {
+  if (!selectedSubject) return;
+  answers = {};
+  goSection(0);
+  document.getElementById('step-label').textContent = `1 of ${totalSections}`;
+}
+
+// ═══════════════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════════════
+async function submitFeedback() {
+  const strengths   = document.getElementById('txt-strengths').value.trim();
+  const development = document.getElementById('txt-development').value.trim();
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = 'Submitting…';
+
+  const payload = {
+    subject_name: selectedSubject,
+    strengths,
+    development,
+  };
+  SECTIONS.forEach(sec => sec.competencies.forEach(comp => {
+    const v = answers[comp.key];
+    payload[comp.key] = (v && v !== 'na') ? parseInt(v) : null;
+  }));
+
+  try {
+    if (WEBHOOK_URL !== '') {
+      await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        mode: 'no-cors'
+      });
+    }
+
+    // Set dedup cookie
+    setCookie(selectedSubject);
+    refreshDropdown();
+
+    // Build summary
+    const summary = document.getElementById('score-summary');
+    summary.innerHTML = SECTIONS.flatMap(s => s.competencies).map(comp => {
+      const v = answers[comp.key];
+      const label = v === 'na' ? '<span class="comp-na">Not observed</span>'
+                  : v        ? `<span class="comp-v">${RATINGS[v-1].label} (${v}/5)</span>`
+                  :            '<span class="comp-na">Not answered</span>';
+      return `<div class="score-row"><span class="comp-n">${comp.name}</span>${label}</div>`;
+    }).join('');
+
+    document.getElementById('done-desc').textContent =
+      `Your anonymous feedback for ${selectedSubject} has been submitted. It will feed directly into their personal development plan.`;
+
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('step-label').textContent = 'Complete';
+    showScreen('screen-done');
+
+  } catch(err) {
+    btn.disabled = false;
+    btn.innerHTML = 'Submit feedback <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+    alert('Something went wrong. Please check your connection and try again.');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// RESTART
+// ═══════════════════════════════════════════════════════
+function restart() {
+  answers = {};
+  selectedSubject = '';
+  document.getElementById('subject-select').value = '';
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('dupe-banner').style.display = 'none';
+  document.getElementById('txt-strengths').value = '';
+  document.getElementById('txt-development').value = '';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('step-label').textContent = '';
+
+  // Clear rating selections
+  document.querySelectorAll('.rb').forEach(b => {
+    for(let i=1;i<=5;i++) b.classList.remove(`sel-${i}`);
+  });
+  document.querySelectorAll('.rb-na').forEach(b => b.classList.remove('sel-na'));
+  document.querySelectorAll('.comp-card').forEach(c => c.classList.remove('answered'));
+
+  refreshDropdown();
+  showScreen('screen-welcome');
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+buildSections();
+populateColleaguesFromURL();
+refreshDropdown();
+</script>
+</body>
+</html>
