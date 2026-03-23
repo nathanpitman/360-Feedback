@@ -39,7 +39,7 @@ repo/
 ├── .github/
 │   └── workflows/
 │       └── deploy.yml              ← Injects webhook URL, generates hash path, deploys to gh-pages
-├── power_automate_flow.json        ← Import once into Power Automate. Do not re-import unless rebuilding.
+├── power_automate_payload_reference.json        ← Sample payload JSON. Paste into PA "Generate from sample" when building the flow manually.
 ├── 360_feedback_dashboard_v2.xlsx  ← Upload once to SharePoint/OneDrive. Power Automate writes here.
 ├── skills/
 │   └── 360-feedback-deployer/

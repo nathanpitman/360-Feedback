@@ -16,7 +16,7 @@ Colleague fills in the form on GitHub Pages
 
        ↓  (POST to Power Automate webhook — URL injected at build time, not in repo)
 
-Power Automate writes a row to 360_feedback_dashboard.xlsx in your SharePoint/OneDrive
+Power Automate writes a row to 360_feedback_dashboard_v2.xlsx in your SharePoint/OneDrive
 ```
 
 The `{hash}` in the URL is derived from your Power Automate webhook URL at build time — unguessable from the outside, but stable unless you rotate the secret.
@@ -28,9 +28,10 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 | File | Purpose |
 |---|---|
 | `src/form-template.html` | The feedback form. Edit this to change questions or styling. Contains no secrets. |
-| `power_automate_flow.json` | Power Automate flow definition. Import once into your O365 tenant. |
-| `360_feedback_dashboard.xlsx` | Excel template. Upload once to SharePoint or OneDrive. Responses write here. |
+| `power_automate_payload_reference.json` | Sample JSON payload. Paste into Power Automate's "Generate from sample" when building the flow. |
+| `360_feedback_dashboard_v2.xlsx` | Excel template. Upload once to SharePoint or OneDrive. Responses write here. |
 | `.github/workflows/deploy.yml` | Build and deploy pipeline. Injects the webhook URL and publishes to GitHub Pages. |
+| `skills/360-feedback-deployer/SKILL.md` | Context skill for AI assistants continuing work on this project. |
 
 ---
 
@@ -38,7 +39,7 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 
 ### Step 1 — Upload the Excel template to SharePoint or OneDrive
 
-1. Upload `360_feedback_dashboard.xlsx` to a SharePoint document library or your OneDrive
+1. Upload `360_feedback_dashboard_v2.xlsx` to a SharePoint document library or your OneDrive
 2. Note the **site/drive path** — you'll need it in Step 2
 3. Make sure the file stays at this location permanently — Power Automate will write to it by path
 
@@ -46,18 +47,56 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 
 ---
 
-### Step 2 — Import the Power Automate flow
+### Step 2 — Build the Power Automate flow
+
+> **Note:** Power Automate's Import Package requires a proprietary zip format. The flow must be built manually — it only takes about 5 minutes and has 3 steps.
+
+**2a. Create a new flow**
 
 1. Go to [make.powerautomate.com](https://make.powerautomate.com)
-2. **My Flows → Import → Import Package (Legacy)**
-3. Upload `power_automate_flow.json`
-4. Once imported, open the flow and find the **Add Row to Excel** action
-5. Update these two fields to point to your uploaded Excel file:
-   - **Drive**: select your SharePoint site or OneDrive
-   - **File**: browse to `360_feedback_dashboard.xlsx`
-6. **Save and turn the flow on**
-7. Go to **My Flows → select the flow → Edit → When an HTTP request is received**
-8. Copy the **HTTP POST URL** — this is your webhook URL
+2. **My Flows → + New flow → Instant cloud flow**
+3. Name it `360 Feedback Receiver`
+4. Choose trigger: **When an HTTP request is received** → Create
+
+**2b. Add a Parse JSON step**
+
+1. Click **+ New step** → search for `Parse JSON` → select it
+2. Set **Content** to `Body` from the trigger's dynamic content panel
+3. Click **Generate from sample** and paste the entire contents of `power_automate_payload_reference.json` from this repo
+4. Click Done — Power Automate will generate the schema automatically
+
+**2c. Add an Excel — Add a row into a table step**
+
+1. Click **+ New step** → search `Excel Online (Business)` → select **Add a row into a table**
+2. Fill in the fields:
+   - **Location**: select your SharePoint site or OneDrive
+   - **Document Library**: the library where you uploaded the Excel file
+   - **File**: browse to `360_feedback_dashboard_v2.xlsx`
+   - **Table**: select `FeedbackResponses`
+3. Map each column to the matching field from the Parse JSON dynamic content:
+
+| Excel column | Dynamic content value |
+|---|---|
+| Timestamp | Use expression: `utcNow()` |
+| Subject Name | `subject_name` |
+| Future Focused | `future_focused` |
+| Adaptability | `adaptability` |
+| Positive Outlook | `positive_outlook` |
+| Communication | `communication` |
+| Empathy | `empathy` |
+| Teamwork | `teamwork` |
+| Stakeholder Management | `stakeholder_management` |
+| Planning & Problem Solving | `planning` |
+| Inspirational Leadership | `inspirational_leadership` |
+| Strengths | `strengths` |
+| Development Areas | `development` |
+
+**2d. Save and get your webhook URL**
+
+1. Click **Save**
+2. Go back to the **When an HTTP request is received** trigger step
+3. Copy the **HTTP POST URL** — this is your `PA_WEBHOOK_URL`
+4. Make sure the flow is **turned on** (flows default to off after creation)
 
 > Keep this URL private. It is the only security layer between the public internet and your Excel file.
 
