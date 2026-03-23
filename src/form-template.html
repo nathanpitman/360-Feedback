@@ -930,8 +930,8 @@ async function submitFeedback() {
         body: JSON.stringify(payload),
       });
       console.log('Webhook response status:', res.status);
-    } else {
-      console.warn('WEBHOOK_URL not configured — submission skipped.');
+    } else if (location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:') {
+      console.log('[Dev] Webhook skipped in local environment. Payload:', payload);
     }
 
     // Set dedup cookie
