@@ -88,15 +88,16 @@ The `{hash}` in the URL is derived from your Power Automate webhook URL at build
 | Timestamp | Use expression: `utcNow()` |
 | Subject Name | `subject_name` |
 | Form ID | `form_id` |
-| Future Focused | `future_focused` |
-| Adaptability | `adaptability` |
-| Positive Outlook | `positive_outlook` |
-| Communication | `communication` |
-| Empathy | `empathy` |
-| Teamwork | `teamwork` |
-| Stakeholder Management | `stakeholder_management` |
-| Planning & Problem Solving | `planning` |
-| Inspirational Leadership | `inspirational_leadership` |
+| Authentic and ethical leadership | `authentic_ethical_leadership` |
+| Emotional intelligence | `emotional_intelligence` |
+| Inspire and influence | `inspire_and_influence` |
+| Change management | `change_management` |
+| Team building and collaboration | `team_building_collaboration` |
+| Future focused, innovative, curious and courageous | `future_focused_innovative` |
+| Decision making and problem solving | `decision_making_problem_solving` |
+| Growth mindset with high self-awareness | `growth_mindset` |
+| Cultural competence | `cultural_competence` |
+| Communicates with impact | `communicates_with_impact` |
 | Strengths | `strengths` |
 | Development Areas | `development` |
 
