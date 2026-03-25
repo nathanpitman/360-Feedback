@@ -587,8 +587,8 @@ select.subject-select:focus { border-color: var(--accent); }
 const WEBHOOK_URL = '__WEBHOOK_URL__';
 
 
-// How many days before the same person can re-submit for the same subject
-const DEDUP_DAYS = 30;
+// Days before the same person can re-submit — set from the ?id= token lifetime on load
+let DEDUP_DAYS = 30;
 
 // ═══════════════════════════════════════════════════════
 // POPULATE DROPDOWN FROM URL PARAMETERS
@@ -613,6 +613,9 @@ function populateColleaguesFromURL() {
         window.location.href = '../expired.html';
         return;
       }
+
+      // Align dedup window to link lifetime
+      DEDUP_DAYS = lifetime;
 
       names.forEach(name => {
         const opt = document.createElement('option');
