@@ -145,15 +145,16 @@ The form POSTs this JSON structure (must match `power_automate_payload_reference
   "form_id": "eyJuIjpbIkFsaWNlIFNtaXRoIl0sImMiOjE3NDI5MDAwMDAwMDAsImwiOjE0fQ",
   "strengths": "Free text...",
   "development": "Free text...",
-  "future_focused": 4,
-  "adaptability": null,
-  "positive_outlook": 3,
-  "communication": 5,
-  "empathy": null,
-  "teamwork": 4,
-  "stakeholder_management": 2,
-  "planning": 5,
-  "inspirational_leadership": 3
+  "authentic_ethical_leadership": 4,
+  "emotional_intelligence": 5,
+  "inspire_and_influence": 3,
+  "change_management": 4,
+  "team_building_collaboration": 5,
+  "future_focused_innovative": 4,
+  "decision_making_problem_solving": 3,
+  "growth_mindset": 5,
+  "cultural_competence": null,
+  "communicates_with_impact": 4
 }
 ```
 
@@ -169,34 +170,25 @@ This is the single source of truth for all competencies. The `key` is used in th
 
 **This table must stay in sync with the `SECTIONS` array in `src/form-template.html`.** If it changes there, update this table, `power_automate_payload_reference.json`, the `FeedbackResponses` table columns in `360_feedback_dashboard.xlsx`, the Power Automate Add Row mappings, and `README.md`.
 
-### Pillar: Make it Happen
+### Pillar: Core Leadership Capabilities (section 1 of 2)
 
 | Key | Display name | Behavioural descriptor |
 |---|---|---|
-| `future_focused` | Future Focused | Actively seeks to understand the future world to ensure we are ahead of the game. Seeks potential opportunities before they even exist and identifies potential hurdles with a plan to overcome them. |
-| `adaptability` | Adaptability | Flexibility in handling change. Willingly challenges their own ideas based on new information or changing needs. Able to juggle multiple demands. |
-| `positive_outlook` | Positive Outlook | Persistence in pursuing goals despite obstacles and setbacks. Sees the positive in people, situations and events more often than the negative. |
+| `authentic_ethical_leadership` | Authentic and ethical leadership | Acts with humility, purpose and integrity, shows true self. Builds trust and credibility. |
+| `emotional_intelligence` | Emotional intelligence | Shows genuine care, pride and respect for people. The capacity to understand and manage one's own emotions, as well as empathize with others. |
+| `inspire_and_influence` | Inspire and influence | Ability to inspire, persuade, and motivate others. Creates an environment that engages others to deliver above and beyond because they want to, not because they are told. |
+| `change_management` | Change management | Adaptable, resilient and agile. Able to adapt to change, overcome setbacks and perform under pressure. Anticipates change and leads others through change. |
+| `team_building_collaboration` | Team building and collaboration | Creates cohesion by developing teams and building stakeholder relationships. Draws on individual strengths. Everyone wins together. |
 
-### Pillar: Never Settle
-
-| Key | Display name | Behavioural descriptor |
-|---|---|---|
-| `communication` | Communication | Communicates with impact and credibility across multiple channels and stakeholders. Simplifies complex issues into executable plans. Demonstrates active listening. |
-| `empathy` | Empathy | Sensing others' feelings and perspectives, taking an active interest in their concerns. Can pick up cues and understand what is being felt and thought. |
-
-### Pillar: Choose Right
+### Pillar: Core Leadership Capabilities (section 2 of 2)
 
 | Key | Display name | Behavioural descriptor |
 |---|---|---|
-| `teamwork` | Teamwork | Seeks to understand the views of others so common goals can be developed and achieved. Works with others interdependently, not separately or competitively. |
-| `stakeholder_management` | Stakeholder Management | Consistently leads by example. Acts with integrity, impartiality and independence, balancing different stakeholder needs. Uses interpersonal skills to build great relationships. |
-
-### Pillar: Smart with Heart
-
-| Key | Display name | Behavioural descriptor |
-|---|---|---|
-| `planning` | Planning & Problem Solving | Demonstrates the ability to analyse and understand data and information quickly. Plans and organises work and resources, always ensuring commitments are completed on time. |
-| `inspirational_leadership` | Inspirational Leadership | Brings people together to get the job done and brings out the best in people. Engages with impact and credibility. |
+| `future_focused_innovative` | Future focused, innovative, curious and courageous | Creates an environment that empowers other to come up with ideas. Identifies opportunities. Sets clear direction and vision. Inspires others to achieve. |
+| `decision_making_problem_solving` | Decision making and problem solving | Able to assess the situation using data, sound judgement, critical thinking and innovation to make timely decisions and problem solve, even in the face of uncertainty. |
+| `growth_mindset` | Growth mindset with high self-awareness | Open minded, learns from others, takes a continuous improvement approach. It is more important to get things right, than to be right. |
+| `cultural_competence` | Cultural competence | This includes both role modelling our values in practice and the ability to attract and lead diverse teams in an inclusive environment. |
+| `communicates_with_impact` | Communicates with impact | Effective verbal, written, and non-verbal communication skills, ensuring the clear, concise, and open exchange of information and ideas, without fear of retribution. |
 
 ### Open-text questions
 
@@ -273,7 +265,7 @@ This is client-side only — it can be bypassed by clearing cookies or using a d
 ## How to make common changes
 
 ### Change or add a competency
-Edit `SECTIONS` array in `src/form-template.html`. Update `power_automate_payload_reference.json`. Update PA flow JSON schema and Add Row mappings. Add column to Excel table. Update `README.md` column mapping table. Push to main.
+Edit `SECTIONS` array in `src/form-template.html`. Update `power_automate_payload_reference.json`. Update PA flow JSON schema and Add Row mappings. Update the `FeedbackResponses` table columns in `360_feedback_dashboard.xlsx` (use openpyxl). Update `README.md` column mapping table. Update the canonical question set in this SKILL.md. Push to main.
 
 ### Update the list of colleagues who can be reviewed
 No code change or redeploy needed. Open the Generator (`/{HASH}/generate/`), enter the new names, generate a new link, and share it.
