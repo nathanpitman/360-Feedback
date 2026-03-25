@@ -589,6 +589,8 @@ const WEBHOOK_URL = 'https://default2957ba74c9554b87b497302a570630.79.environmen
 
 // Days before the same person can re-submit — set from the ?id= token lifetime on load
 let DEDUP_DAYS = 30;
+// Scopes dedup cookies to the specific link — set from the ?id= token on load
+let formId = '';
 
 // ═══════════════════════════════════════════════════════
 // POPULATE DROPDOWN FROM URL PARAMETERS
@@ -614,8 +616,9 @@ function populateColleaguesFromURL() {
         return;
       }
 
-      // Align dedup window to link lifetime
+      // Align dedup window to link lifetime and scope cookies to this link
       DEDUP_DAYS = lifetime;
+      formId = id;
 
       names.forEach(name => {
         const opt = document.createElement('option');
@@ -698,7 +701,9 @@ const totalSections = SECTIONS.length + 1; // +1 for open text
 // COOKIE HELPERS
 // ═══════════════════════════════════════════════════════
 function cookieKey(subject) {
-  return '360fb_' + subject.replace(/\s+/g,'_').toLowerCase();
+  const subjectSlug = subject.replace(/\s+/g,'_').toLowerCase();
+  const idSlug = formId ? '_' + formId.slice(0, 12) : '';
+  return '360fb_' + subjectSlug + idSlug;
 }
 
 function setCookie(subject) {
