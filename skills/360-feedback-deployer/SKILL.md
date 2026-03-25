@@ -28,7 +28,7 @@ Whenever you make a change to this system, check whether **every file in this ta
 | `skills/360-feedback-deployer/SKILL.md` | Any architectural change, new gotcha discovered, new file added, or change to how colleague names / tokens / payloads work. Keep this file current so future sessions have accurate context. |
 | `src/form-template.html` | Any change to questions, competencies, payload fields, or URL parameter handling. |
 | `.github/workflows/deploy.yml` | Any new `src/` file that should be included in the deployment, or changes to the URL structure. |
-| `360_feedback_dashboard.xlsx` | New competency columns added or payload fields changed that need a matching column in the `FeedbackResponses` table. (Note to Claude: flag this to the user — you cannot edit the Excel file directly.) |
+| `360_feedback_dashboard.xlsx` | New competency columns added or payload fields changed that need a matching column in the `FeedbackResponses` table. **You created this file and can update it directly using `openpyxl` via Bash.** Install with `pip3 install openpyxl` if needed. Always insert columns in the correct position, update the `FeedbackResponses` table ref to match, and copy cell styles from an adjacent header cell. |
 
 **Treat these files as a set.** A change to one nearly always implies a change to at least one other.
 
