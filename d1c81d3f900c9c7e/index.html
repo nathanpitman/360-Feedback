@@ -587,8 +587,8 @@ select.subject-select:focus { border-color: var(--accent); }
 const WEBHOOK_URL = 'https://default2957ba74c9554b87b497302a570630.79.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/2eaf00d7dd8a4382a75294ae92947b4d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=6cpCiiAPh1tJy5fQD8M0Kn_Ypp8gy8lCeNkX3v5wPTc';
 
 
-// How many days before the same person can re-submit for the same subject
-const DEDUP_DAYS = 30;
+// Days before the same person can re-submit — set from the ?id= token lifetime on load
+let DEDUP_DAYS = 30;
 
 // ═══════════════════════════════════════════════════════
 // POPULATE DROPDOWN FROM URL PARAMETERS
@@ -613,6 +613,9 @@ function populateColleaguesFromURL() {
         window.location.href = '../expired.html';
         return;
       }
+
+      // Align dedup window to link lifetime
+      DEDUP_DAYS = lifetime;
 
       names.forEach(name => {
         const opt = document.createElement('option');
