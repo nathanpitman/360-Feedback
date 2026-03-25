@@ -39,6 +39,9 @@ jobs:
           mkdir -p dist/${{ steps.hash.outputs.path }}
           cp /tmp/index.html dist/${{ steps.hash.outputs.path }}/index.html
           cp src/404.html dist/404.html
+          cp src/expired.html dist/expired.html
+          mkdir -p dist/${{ steps.hash.outputs.path }}/generate
+          cp src/generate.html dist/${{ steps.hash.outputs.path }}/generate/index.html
 
           # Also write a root index that prints nothing useful (no hints)
           cat > dist/index.html << 'EOF'
@@ -55,21 +58,21 @@ jobs:
       - name: Print live URL
         run: |
           FORM_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ steps.hash.outputs.path }}/"
-          SHARE_URL="${FORM_URL}?colleagues=Name1,Name2,Name3"
+          GENERATOR_URL="${FORM_URL}generate/"
 
           # Write to job summary — visible at the top of the Actions run page
           echo "## 360° Feedback — Live URLs" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Form URL**" >> $GITHUB_STEP_SUMMARY
-          echo "\`${FORM_URL}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Generator URL** (use this to create shareable feedback links)" >> $GITHUB_STEP_SUMMARY
+          echo "\`${GENERATOR_URL}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Share link example**" >> $GITHUB_STEP_SUMMARY
-          echo "\`${SHARE_URL}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Form base URL**" >> $GITHUB_STEP_SUMMARY
+          echo "\`${FORM_URL}\`" >> $GITHUB_STEP_SUMMARY
 
           # Also keep console output
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "Live form URL: ${FORM_URL}"
-          echo "Share as: ${SHARE_URL}"
+          echo "Generator URL: ${GENERATOR_URL}"
+          echo "Form base URL: ${FORM_URL}"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       - name: Deploy to GitHub Pages (gh-pages branch)
