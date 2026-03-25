@@ -2,6 +2,8 @@
   "_comment": "Paste this into the 'Generate from sample' field when configuring the Parse JSON step in Power Automate. See README.md Step 2 for full instructions.",
   "subject_name": "Alice Smith",
   "form_id": "eyJuIjpbIkFsaWNlIFNtaXRoIl0sImMiOjE3NDI5MDAwMDAwMDAsImwiOjE0fQ",
+  "strengths": "Some text here",
+  "development": "Some text here",
   "future_focused": 4,
   "adaptability": 3,
   "positive_outlook": 5,
@@ -10,7 +12,5 @@
   "teamwork": 3,
   "stakeholder_management": 4,
   "planning": 5,
-  "inspirational_leadership": 2,
-  "strengths": "Some text here",
-  "development": "Some text here"
+  "inspirational_leadership": 2
 }

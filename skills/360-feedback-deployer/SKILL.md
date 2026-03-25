@@ -163,20 +163,51 @@ The form POSTs this JSON structure (must match `power_automate_payload_reference
 
 ---
 
-## Competency structure
+## Canonical question set
 
-Nine competencies grouped into four pillars:
+This is the single source of truth for all competencies. The `key` is used in the JSON payload and Excel column names. The `name` is the display label. The `desc` is the behavioural descriptor shown on each rating card in the form.
 
-| Pillar | Competencies |
-|---|---|
-| Make it Happen | future_focused, adaptability, positive_outlook |
-| Never Settle | communication, empathy |
-| Choose Right | teamwork, stakeholder_management |
-| Smart with Heart | planning (Planning & Problem Solving), inspirational_leadership |
+**This table must stay in sync with the `SECTIONS` array in `src/form-template.html`.** If it changes there, update this table, `power_automate_payload_reference.json`, the `FeedbackResponses` table columns in `360_feedback_dashboard.xlsx`, the Power Automate Add Row mappings, and `README.md`.
 
-Each competency has a `key` (used in payload), `name` (displayed), and `desc` (behavioural description shown on the card).
+### Pillar: Make it Happen
 
-To add/remove competencies: edit the `SECTIONS` array in `src/form-template.html`. Also update the Power Automate flow's JSON schema and Add Row column mappings, and add the corresponding column to the `FeedbackResponses` table in Excel. Update `power_automate_payload_reference.json` and `README.md`.
+| Key | Display name | Behavioural descriptor |
+|---|---|---|
+| `future_focused` | Future Focused | Actively seeks to understand the future world to ensure we are ahead of the game. Seeks potential opportunities before they even exist and identifies potential hurdles with a plan to overcome them. |
+| `adaptability` | Adaptability | Flexibility in handling change. Willingly challenges their own ideas based on new information or changing needs. Able to juggle multiple demands. |
+| `positive_outlook` | Positive Outlook | Persistence in pursuing goals despite obstacles and setbacks. Sees the positive in people, situations and events more often than the negative. |
+
+### Pillar: Never Settle
+
+| Key | Display name | Behavioural descriptor |
+|---|---|---|
+| `communication` | Communication | Communicates with impact and credibility across multiple channels and stakeholders. Simplifies complex issues into executable plans. Demonstrates active listening. |
+| `empathy` | Empathy | Sensing others' feelings and perspectives, taking an active interest in their concerns. Can pick up cues and understand what is being felt and thought. |
+
+### Pillar: Choose Right
+
+| Key | Display name | Behavioural descriptor |
+|---|---|---|
+| `teamwork` | Teamwork | Seeks to understand the views of others so common goals can be developed and achieved. Works with others interdependently, not separately or competitively. |
+| `stakeholder_management` | Stakeholder Management | Consistently leads by example. Acts with integrity, impartiality and independence, balancing different stakeholder needs. Uses interpersonal skills to build great relationships. |
+
+### Pillar: Smart with Heart
+
+| Key | Display name | Behavioural descriptor |
+|---|---|---|
+| `planning` | Planning & Problem Solving | Demonstrates the ability to analyse and understand data and information quickly. Plans and organises work and resources, always ensuring commitments are completed on time. |
+| `inspirational_leadership` | Inspirational Leadership | Brings people together to get the job done and brings out the best in people. Engages with impact and credibility. |
+
+### Open-text questions
+
+| Payload key | Excel column | Prompt shown to reviewer |
+|---|---|---|
+| `strengths` | Strengths | Describe at least 2 things you would say are this person's strengths. Be specific. |
+| `development` | Development Areas | Describe at least 1 thing you'd like them to do more of as part of their development. |
+
+### Rating scale
+
+All competencies use a 1–5 scale: **1 = Strongly Disagree, 2 = Disagree, 3 = Neither, 4 = Agree, 5 = Strongly Agree.** An "N/A — not observed" option is also available; N/A responses are omitted from the payload entirely (not sent as null).
 
 ---
 
