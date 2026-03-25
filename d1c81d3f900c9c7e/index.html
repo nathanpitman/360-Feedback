@@ -592,24 +592,44 @@ const DEDUP_DAYS = 30;
 
 // ═══════════════════════════════════════════════════════
 // POPULATE DROPDOWN FROM URL PARAMETERS
-// Usage: ?colleagues=Alice%20Smith,Bob%20Jones,Carol%20Lee
-// Names are never stored in the HTML source — pass them at link-share time.
+// Usage: ?id=<base64-encoded token>
+// Token encodes: { n: string[], c: timestamp_ms, l: lifetime_days }
+// Names are never stored in the HTML source — encoded at link-share time.
 // ═══════════════════════════════════════════════════════
 function populateColleaguesFromURL() {
   const params = new URLSearchParams(window.location.search);
-  const raw = params.get('colleagues');
+  const id = params.get('id');
   const select = document.getElementById('subject-select');
 
-  if (raw) {
-    const names = raw.split(',').map(n => n.trim()).filter(Boolean);
-    names.forEach(name => {
+  if (id) {
+    try {
+      const padded = id.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = JSON.parse(atob(padded));
+      const { n: names, c: created, l: lifetime } = decoded;
+
+      // Expiry check
+      const ageDays = (Date.now() - created) / (1000 * 60 * 60 * 24);
+      if (ageDays > lifetime) {
+        window.location.href = '../expired.html';
+        return;
+      }
+
+      names.forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = name;
+        select.appendChild(opt);
+      });
+    } catch(e) {
+      // Malformed token — show invalid state
       const opt = document.createElement('option');
-      opt.value = name;
-      opt.textContent = name;
+      opt.value = '';
+      opt.disabled = true;
+      opt.textContent = '— Invalid link. Please ask for a new one. —';
       select.appendChild(opt);
-    });
+    }
   } else {
-    // No URL param — show a helpful message in the dropdown
+    // No id param — show a helpful message in the dropdown
     const opt = document.createElement('option');
     opt.value = '';
     opt.disabled = true;
@@ -906,6 +926,7 @@ async function submitFeedback() {
 
   const payload = {
     subject_name: selectedSubject,
+    form_id: new URLSearchParams(window.location.search).get('id') || null,
     strengths,
     development,
   };
