@@ -616,8 +616,8 @@ function populateColleaguesFromURL() {
       // Expiry check
       const ageDays = (Date.now() - created) / (1000 * 60 * 60 * 24);
       if (ageDays > lifetime) {
-        window.location.href = '../expired.html';
-        return;
+        //window.location.href = '../expired.html';
+        //return;
       }
 
       // Align dedup window to link lifetime and scope cookies to this link
